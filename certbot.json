@@ -1,0 +1,5 @@
+{
+  "domain": "example.com",
+  "volume_prefix": "./data",
+  "email": "certbot@example.com"
+}
