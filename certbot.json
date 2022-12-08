@@ -1,5 +1,6 @@
 {
   "domain": "example.com",
-  "volume_prefix": "./data",
-  "email": "certbot@example.com"
+  "email": "certbot@example.com",
+  "nginx_image": "nginx:1.23.2-alpine",
+  "volume_prefix": "./data"
 }

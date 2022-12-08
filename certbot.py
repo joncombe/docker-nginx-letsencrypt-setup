@@ -2,8 +2,9 @@
 #
 # {
 #   "domain": "example.com",
-#   "volume_prefix": "./data",
-#   "email": "certbot@example.com"
+#   "email": "certbot@example.com",
+#   "nginx_image": "nginx:latest",
+#   "volume_prefix": "./data"
 # }
 
 # Do not change anything below this line, unless you know what you are doing :)
@@ -25,7 +26,7 @@ def cleanup():
     print(
         "\nNow go ahead and edit the docker-compose.yml and nginx.conf files, being careful that you:"
     )
-    print(" 1) don't remove any of the 'volumes' lines in docker-compose.yaml")
+    print(" 1) don't remove any of the 'volumes' lines in docker-compose.yml")
     print(" 2) don't remove any of the 'ssl_cert*' lines in nginx.conf")
 
 
@@ -53,7 +54,7 @@ def start_docker():
 
 
 def stop_docker():
-    if os.path.exists("docker-compose.yaml"):
+    if os.path.exists("docker-compose.yml"):
         os.system("docker compose down")
 
 
@@ -64,7 +65,7 @@ def write_docker_compose_yml(config):
 
 services:
   webserver:
-    image: nginx:latest
+    image: {config['nginx_image']}
     ports:
       - 80:80
       - 443:443
