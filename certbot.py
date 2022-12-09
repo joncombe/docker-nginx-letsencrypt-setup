@@ -71,15 +71,15 @@ services:
       - 443:443
     restart: always
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - {config['volume_prefix']}/certbot/www:/var/www/certbot/:ro
       - {config['volume_prefix']}/certbot/conf/:/etc/nginx/ssl/:ro
+      - {config['volume_prefix']}/certbot/www:/var/www/certbot/:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
   certbot:
     image: certbot/certbot:latest
     volumes:
-      - {config['volume_prefix']}/certbot/www/:/var/www/certbot/:rw
       - {config['volume_prefix']}/certbot/conf/:/etc/letsencrypt/:rw
+      - {config['volume_prefix']}/certbot/www/:/var/www/certbot/:rw
   """,
     )
 
@@ -124,6 +124,8 @@ server {{
             return 444;
         }}
 
+        # you will likely want to replace the following line with
+        # your own configuration
         root /usr/share/nginx/html;
     }}
 }}""",
