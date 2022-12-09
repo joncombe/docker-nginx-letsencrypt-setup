@@ -3,6 +3,7 @@
 # {
 #   "domain": "example.com",
 #   "email": "certbot@example.com",
+#   "legacy_compose": false,
 #   "nginx_image": "nginx:latest",
 #   "volume_prefix": "./data"
 # }
@@ -32,7 +33,7 @@ services:
       - [VOLUME_PREFIX]/certbot/conf/:/etc/letsencrypt/:rw
       - [VOLUME_PREFIX]/certbot/www/:/var/www/certbot/:rw"""
 
-LETSENCRYPT_TEMPLATE = "docker compose run --rm  certbot certonly --webroot --webroot-path /var/www/certbot/ [DRYRUN] -d [DOMAIN] --non-interactive --agree-tos -m [EMAIL]"
+LETSENCRYPT_TEMPLATE = "[COMPOSE] run --rm  certbot certonly --webroot --webroot-path /var/www/certbot/ [DRYRUN] -d [DOMAIN] --non-interactive --agree-tos -m [EMAIL]"
 
 NGINX_PRE_TEMPLATE = """server {
     listen 80 default_server;
@@ -93,6 +94,7 @@ class DockerNginxLetsEncryptSetup:
 
         # TODO: validate the config, e.g.
         # - domain is a valid fqdn
+        # - legacy_compose exists
         # - volume_prefix is a non-empty string
         # - email is a valid email string
 
@@ -109,22 +111,29 @@ class DockerNginxLetsEncryptSetup:
         print(
             "\nAdd the following line to your crontab to auto-renew this certificate:"
         )
-        print("0 0,12 * * * docker compose run --rm certbot renew")
+        print(f"0 0,12 * * * {self.compose()} run --rm certbot renew")
         print(
             "\nEdit the docker-compose.yml and nginx.conf files to suit your project, being careful that you:"
         )
         print(" 1) don't remove any of the 'volumes' lines in docker-compose.yml")
         print(" 2) don't remove any of the 'ssl_cert*' lines in nginx.conf")
 
+    def compose(self):
+        return "docker-compose" if self.config["legacy_compose"] else "docker compose"
+
     def get_certificate(self, dry_run=True):
         os.system(
             LETSENCRYPT_TEMPLATE.replace(
-                "[DRYRUN]",
-                "--dry-run" if dry_run else "",
+                "[COMPOSE]",
+                self.compose(),
             )
             .replace(
                 "[DOMAIN]",
                 self.config["domain"],
+            )
+            .replace(
+                "[DRYRUN]",
+                "--dry-run" if dry_run else "",
             )
             .replace(
                 "[EMAIL]",
@@ -144,11 +153,11 @@ class DockerNginxLetsEncryptSetup:
         self.cleanup()
 
     def start_docker(self):
-        os.system("docker compose up -d")
+        os.system(f"{self.compose()} up -d")
 
     def stop_docker(self):
         if os.path.exists("docker-compose.yml"):
-            os.system("docker compose down")
+            os.system(f"{self.compose()} down")
 
     def write_docker_compose_yml(self):
         self.write_file(

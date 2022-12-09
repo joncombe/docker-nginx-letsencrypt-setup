@@ -39,6 +39,7 @@ This has been tested on Ubuntu servers. I think it will work on any Linux enviro
 {
   "domain": "example.com",
   "email": "certbot@example.com",
+  "legacy_compose": false,
   "nginx_image": "nginx:1.23.2-alpine",
   "volume_prefix": "./data"
 }
@@ -46,6 +47,7 @@ This has been tested on Ubuntu servers. I think it will work on any Linux enviro
 
 - `domain` should be the FQDN of your website, e.g. _en.wikipedia.org_
 - `email` is the email address you provide to Let's Encrypt
+- `legacy_compose` when `true` uses the old v1 syntax of docker compose, i.e. `docker-compose` with the hyphen
 - `nginx_image` is the name of the nginx image to use. Leaving it the default value will be fine for most of you.
 - `volume_prefix` is the local path to the location your persisted docker data files are stored. If you are not sure what to do here, leave it as it is. _[TODO: improve how to explain this, my terminology has failed me]_
 
