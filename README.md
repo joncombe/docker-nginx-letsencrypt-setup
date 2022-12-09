@@ -3,21 +3,15 @@ This script sets up a Let's Encrypt certificate on an Nginx webserver for use in
 ## tl;dr - how to install
 
 - Ensure your DNS is already configured and propagated.
-
 - Copy the `certbot.py` and `certbot.json` files from this repo to your server.
-
   ```
   curl -OO https://raw.githubusercontent.com/joncombe/docker-nginx-letsencrypt-setup/main/{certbot.json,certbot.py}
   ```
-
 - Edit `certbot.json` to taste. You likely only need to edit `domain` and `email`.
-
 - Run the script:
-
   ```
   python3 certbot.py
   ```
-
 - Add the following line to your crontab so that certificates automatically renew:
   ```
   0 0,12 * * * docker compose run --rm certbot renew
