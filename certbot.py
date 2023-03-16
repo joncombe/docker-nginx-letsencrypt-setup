@@ -109,9 +109,10 @@ class DockerNginxLetsEncryptSetup:
             os.remove("certbot.py")
             print("Deleted the setup files.")
         print(
-            "\nAdd the following line to your crontab to auto-renew this certificate:"
+            "\nAdd the following lines to your crontab to auto-renew this certificate:"
         )
-        print(f"0 0,12 * * * {self.compose()} run --rm certbot renew")
+        print(f"0 0,12 * * *   {self.compose()} run --rm certbot renew")
+        print(f"5 0 * * 1,4    docker exec webserver nginx -s reload")
         print(
             "\nEdit the docker-compose.yml and nginx.conf files to suit your project, being careful that you:"
         )
