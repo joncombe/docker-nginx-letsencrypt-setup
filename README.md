@@ -15,7 +15,7 @@ This script sets up a Let's Encrypt certificate on an Nginx webserver for use in
 - Add the following lines to your crontab so that certificates automatically renew:
   ```
   0 0,12 * * *   docker compose run --rm certbot renew
-  5 0 * * 1,4    docker exec webserver nginx -s reload
+  5 0 * * *      docker exec webserver nginx -s reload
   ```
 - All done. Wasn't that easy?
 
@@ -131,7 +131,7 @@ The cronjobs work together to keep your certificates up-to-date. There are two p
 
    Ideally we'd use the Certbot `--post-hook` here, which runs a command or script after a successful renewal, but this isn't straightforward as we would need for our Certbot container to communicate directly with our Nginx container. Yes, it can be done, but I specifically wanted this project to be _as simple as possible_ and so I have chosen not to do it that way at this time. Instead...
 
-2. The second command requests nginx `reload` itself at 5-past-midnight every Monday and Thursday. This isn't elegant but it works: each time Nginx reloads, it will use the newest certificates it has available. There is no downtime when `reload` is called.
+2. The second command requests nginx `reload` itself at 5-past-midnight every night. This isn't elegant but it works: each time Nginx reloads, it will use the newest certificates it has available. There is no downtime when `reload` is called.
 
 ## Legal
 

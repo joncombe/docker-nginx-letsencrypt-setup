@@ -111,22 +111,25 @@ class DockerNginxLetsEncryptSetup:
         print(
             "\nAdd the following lines to your crontab to auto-renew this certificate:"
         )
-        print(f"0 0,12 * * *   {self.compose()} run --rm certbot renew")
-        print(f"5 0 * * 1,4    docker exec webserver nginx -s reload")
+        print(f"0 0,12 * * *   {self.compose(True)} run --rm certbot renew")
+        print(f"5 0,12 * * *   docker exec webserver nginx -s reload")
         print(
             "\nEdit the docker-compose.yml and nginx.conf files to suit your project, being careful that you:"
         )
         print(" 1) don't remove any of the 'volumes' lines in docker-compose.yml")
         print(" 2) don't remove any of the 'ssl_cert*' lines in nginx.conf")
 
-    def compose(self):
-        return "docker-compose" if self.config["legacy_compose"] else "docker compose"
+    def compose(self, include_path):
+        if self.config["legacy_compose"]:
+            return "/usr/local/bin/docker-compose" if include_path else "docker-compose"
+
+        return "docker compose"
 
     def get_certificate(self, dry_run=True):
         os.system(
             LETSENCRYPT_TEMPLATE.replace(
                 "[COMPOSE]",
-                self.compose(),
+                self.compose(False),
             )
             .replace(
                 "[DOMAIN]",
@@ -154,11 +157,11 @@ class DockerNginxLetsEncryptSetup:
         self.cleanup()
 
     def start_docker(self):
-        os.system(f"{self.compose()} up -d")
+        os.system(f"{self.compose(False)} up -d")
 
     def stop_docker(self):
         if os.path.exists("docker-compose.yml"):
-            os.system(f"{self.compose()} down")
+            os.system(f"{self.compose(False)} down")
 
     def write_docker_compose_yml(self):
         self.write_file(
