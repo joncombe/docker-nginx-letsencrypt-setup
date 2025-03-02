@@ -138,4 +138,4 @@ The cronjobs work together to keep your certificates up-to-date. There are two p
 
 ## Legal
 
-Be aware, running this next command assumes you agree to the Let's Encrypt Terms of Service. See: https://letsencrypt.org/documents/LE-SA-v1.3-September-21-2022.pdf. If you do not agree to these rules, please do NOT use this script.
+Be aware, running this next command assumes you agree to the Let's Encrypt Subscriber Agreement. See: https://letsencrypt.org/documents/LE-SA-v1.5-February-24-2025.pdf. If you do not agree to these rules, please do NOT use this script.
